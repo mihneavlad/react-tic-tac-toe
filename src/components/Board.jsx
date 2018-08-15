@@ -4,10 +4,12 @@ import Square from './Square';
 class Board extends Component {
 
   constructor(props) {
-  super(props);
-  this.state = {
-    squares: Array(9).fill(null),
-  };
+    super(props);
+
+    this.state = {
+      // squares: Array,
+      squares: Array(9).fill('@'),
+    };
   }
 
   handleClick(i) {
