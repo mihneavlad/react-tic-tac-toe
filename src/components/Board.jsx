@@ -7,24 +7,39 @@ class Board extends Component {
     super(props);
 
     this.state = {
-      // squares: Array,
-      squares: Array(9).fill('@'),
+      squares: Array(9).fill(null),
+      xIsNext: true
     };
   }
 
   handleClick(i) {
-  const squares = this.state.squares.slice();
-  squares[i] = 'X';
-  this.setState({squares: squares});
-  }
+    const squares = this.state.squares.slice();
+    squares[i] = this.state.xIsNext ? 'X' : '0';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext
+    });
+    }
 
   renderSquare(i) {
-    return <Square value={this.state.squares[i]}
-    onClick={() => this.handleClick(i)} />;
+    return <Square
+      value={this.state.squares[i]}
+      onClick={() => this.handleClick(i)}
+    />;
   }
 
   render() {
-    const status = 'Next player: X';
+
+    const winner = calculateWinner(this.state.squares);
+    let status;
+
+    if(winner) {
+      status = 'The winner is' + winner;
+    }
+
+    else {
+      status = 'Next player is' + (this.state.xIsNext ? 'X' : '0');
+    }
 
     return (
       <Fragment>
@@ -43,6 +58,26 @@ class Board extends Component {
       </Fragment>
     );
   }
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 export default Board;
