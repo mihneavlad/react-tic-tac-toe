@@ -9,12 +9,13 @@ class Game extends Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      stepNumber: 0,
       xIsNext: true,
     };
   }
 
   handleClick(i) {
-    const history = this.state.history;
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
 
@@ -23,17 +24,36 @@ class Game extends Component {
     }
     squares[i] = this.state.xIsNext ? 'X' : '0';
     this.setState({
-        history: history.concat([{
-          squares: squares,
-        }]),
+      history: history.concat([{
+        squares: squares,
+      }]),
+      stepNumber: history.length,
       xIsNext: !this.state.xIsNext
+    });
+  }
+
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
     });
   }
 
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+
+    const moves = history.map((step, move) => {
+      const goTo = move ?
+      'Go to move #' + move :
+      'Go to game start';
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{goTo}</button>
+        </li>
+      )
+    });
 
     let status;
     if (winner) {
@@ -52,10 +72,11 @@ class Game extends Component {
             />
           </div>
           <div className="col-sm-4 game-info">
-            <div>{status}</div>
-            {/* <p className="h2">{status}</p> */}
+            {/* <div>{status}</div> */}
+            <p className="h2">{status}</p>
+            {/* <ol>{moves}</ol> */}
             <ul className="nav nav-pills flex-column">
-              {/* TODO */}
+              {moves}
             </ul>
           </div>
         </section>
