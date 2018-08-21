@@ -49,12 +49,19 @@ class Game extends Component {
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
+      const active = this.state.stepNumber === move;
       const goTo = move ?
       'Go to move #' + move + '  '+ '(' + step.coordinates.col + ', ' + step.coordinates.row + ')':
       'Go to the start of the game';
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{goTo}</button>
+        <li
+          className="nav-item"
+          key={move}
+        >
+          <span
+              className={`nav-link ${active ? 'nav-link active' : ''}`}
+              onClick={() => this.jumpTo(move)}>{goTo}
+          </span>
         </li>
       )
     });
@@ -62,9 +69,14 @@ class Game extends Component {
     let status;
     if (winner) {
       status = 'The winner is ' + winner;
-    } else {
-      status = 'Next player is ' + (this.state.xIsNext ? 'X' : '0');
+    } else if(!current.squares.includes(null)) {
+      status = 'This is a draw!'
     }
+    else {
+      status = 'The next player is ' + (this.state.xIsNext ? 'X' : '0');
+    }
+
+
 
     return (
       <article className="game container mt-5">
@@ -76,12 +88,10 @@ class Game extends Component {
             />
           </div>
           <div className="col-sm-4 game-info">
-            {/* <div>{status}</div> */}
             <p className="h2">{status}</p>
-            {/* <ol>{moves}</ol> */}
-            <ul className="nav nav-pills flex-column">
+            <ol className="nav nav-pills flex-column">
               {moves}
-            </ul>
+            </ol>
           </div>
         </section>
       </article>
